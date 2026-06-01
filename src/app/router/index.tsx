@@ -6,7 +6,7 @@ export const router = createRouter({
   routeTree,
   defaultNotFoundComponent: () => <div> 404 Not Found</div>,
   context: {
-    isAuthenticated: false, // This will be updated by the provider
+    isAuthenticated: false,
   },
 });
 

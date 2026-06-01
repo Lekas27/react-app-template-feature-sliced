@@ -9,48 +9,87 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as _authorizeRouteImport } from './routes/__authorize'
 import { Route as _publicIndexRouteImport } from './routes/__public/index'
+import { Route as _publicRegisterRouteImport } from './routes/__public/register'
+import { Route as _publicLoginRouteImport } from './routes/__public/login'
 import { Route as _authorizeProfileRouteImport } from './routes/__authorize/profile'
 
+const _authorizeRoute = _authorizeRouteImport.update({
+  id: '/__authorize',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const _publicIndexRoute = _publicIndexRouteImport.update({
   id: '/__public/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const _authorizeProfileRoute = _authorizeProfileRouteImport.update({
-  id: '/__authorize/profile',
-  path: '/profile',
+const _publicRegisterRoute = _publicRegisterRouteImport.update({
+  id: '/__public/register',
+  path: '/register',
   getParentRoute: () => rootRouteImport,
+} as any)
+const _publicLoginRoute = _publicLoginRouteImport.update({
+  id: '/__public/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const _authorizeProfileRoute = _authorizeProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => _authorizeRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/profile': typeof _authorizeProfileRoute
+  '/login': typeof _publicLoginRoute
+  '/register': typeof _publicRegisterRoute
   '/': typeof _publicIndexRoute
 }
 export interface FileRoutesByTo {
   '/profile': typeof _authorizeProfileRoute
+  '/login': typeof _publicLoginRoute
+  '/register': typeof _publicRegisterRoute
   '/': typeof _publicIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/__authorize': typeof _authorizeRouteWithChildren
   '/__authorize/profile': typeof _authorizeProfileRoute
+  '/__public/login': typeof _publicLoginRoute
+  '/__public/register': typeof _publicRegisterRoute
   '/__public/': typeof _publicIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/profile' | '/'
+  fullPaths: '/profile' | '/login' | '/register' | '/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/profile' | '/'
-  id: '__root__' | '/__authorize/profile' | '/__public/'
+  to: '/profile' | '/login' | '/register' | '/'
+  id:
+    | '__root__'
+    | '/__authorize'
+    | '/__authorize/profile'
+    | '/__public/login'
+    | '/__public/register'
+    | '/__public/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  _authorizeProfileRoute: typeof _authorizeProfileRoute
+  _authorizeRoute: typeof _authorizeRouteWithChildren
+  _publicLoginRoute: typeof _publicLoginRoute
+  _publicRegisterRoute: typeof _publicRegisterRoute
   _publicIndexRoute: typeof _publicIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/__authorize': {
+      id: '/__authorize'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof _authorizeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/__public/': {
       id: '/__public/'
       path: '/'
@@ -58,18 +97,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof _publicIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/__public/register': {
+      id: '/__public/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof _publicRegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/__public/login': {
+      id: '/__public/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof _publicLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/__authorize/profile': {
       id: '/__authorize/profile'
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof _authorizeProfileRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof _authorizeRoute
     }
   }
 }
 
-const rootRouteChildren: RootRouteChildren = {
+interface _authorizeRouteChildren {
+  _authorizeProfileRoute: typeof _authorizeProfileRoute
+}
+
+const _authorizeRouteChildren: _authorizeRouteChildren = {
   _authorizeProfileRoute: _authorizeProfileRoute,
+}
+
+const _authorizeRouteWithChildren = _authorizeRoute._addFileChildren(
+  _authorizeRouteChildren,
+)
+
+const rootRouteChildren: RootRouteChildren = {
+  _authorizeRoute: _authorizeRouteWithChildren,
+  _publicLoginRoute: _publicLoginRoute,
+  _publicRegisterRoute: _publicRegisterRoute,
   _publicIndexRoute: _publicIndexRoute,
 }
 export const routeTree = rootRouteImport
